@@ -1,0 +1,346 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* Import Inter font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+/* Base styles */
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply text-gray-900 bg-gray-50 antialiased;
+    @apply dark:text-gray-100 dark:bg-gray-900;
+    transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-gray-100 dark:bg-gray-800;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 dark:bg-gray-600 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-400 dark:bg-gray-500;
+  }
+
+  /* Firefox scrollbar */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: theme('colors.gray.300') theme('colors.gray.100');
+  }
+
+  .dark * {
+    scrollbar-color: theme('colors.gray.600') theme('colors.gray.800');
+  }
+
+  /* Focus styles */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2;
+    @apply dark:focus:ring-brand-400 dark:focus:ring-offset-gray-800;
+  }
+
+  /* Selection styles */
+  ::selection {
+    @apply bg-brand-100 text-brand-900;
+  }
+
+  .dark ::selection {
+    @apply bg-brand-800 text-brand-100;
+  }
+}
+
+/* Component styles */
+@layer components {
+  /* Button variants */
+  .btn-primary {
+    @apply px-4 py-2 bg-brand-600 text-white rounded-lg font-medium;
+    @apply hover:bg-brand-700 focus:ring-2 focus:ring-brand-500 focus:ring-offset-2;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply transition-colors duration-200;
+  }
+
+  .btn-secondary {
+    @apply px-4 py-2 bg-gray-100 text-gray-900 rounded-lg font-medium;
+    @apply hover:bg-gray-200 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2;
+    @apply dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply transition-colors duration-200;
+  }
+
+  .btn-outline {
+    @apply px-4 py-2 border border-brand-300 text-brand-700 rounded-lg font-medium;
+    @apply hover:bg-brand-50 focus:ring-2 focus:ring-brand-500 focus:ring-offset-2;
+    @apply dark:border-brand-600 dark:text-brand-400 dark:hover:bg-brand-900/20;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply transition-colors duration-200;
+  }
+
+  .btn-ghost {
+    @apply px-4 py-2 text-gray-700 rounded-lg font-medium;
+    @apply hover:bg-gray-100 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2;
+    @apply dark:text-gray-300 dark:hover:bg-gray-700;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply transition-colors duration-200;
+  }
+
+  /* Input styles */
+  .input-primary {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-lg;
+    @apply bg-white text-gray-900 placeholder-gray-500;
+    @apply focus:ring-2 focus:ring-brand-500 focus:border-transparent;
+    @apply dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400;
+    @apply dark:focus:ring-brand-400;
+    @apply transition-colors duration-200;
+  }
+
+  /* Card styles */
+  .card {
+    @apply bg-white border border-gray-200 rounded-xl shadow-sm;
+    @apply dark:bg-gray-800 dark:border-gray-700;
+  }
+
+  .card-elevated {
+    @apply bg-white border border-gray-200 rounded-xl shadow-soft;
+    @apply dark:bg-gray-800 dark:border-gray-700 dark:shadow-soft-lg;
+  }
+
+  .card-glass {
+    @apply glass rounded-xl backdrop-blur-sm;
+    @apply dark:glass-dark;
+  }
+
+  /* Loading animations */
+  .loading-dots {
+    @apply inline-flex space-x-1;
+  }
+
+  .loading-dots > div {
+    @apply w-2 h-2 bg-current rounded-full animate-pulse;
+  }
+
+  .loading-dots > div:nth-child(2) {
+    animation-delay: 0.1s;
+  }
+
+  .loading-dots > div:nth-child(3) {
+    animation-delay: 0.2s;
+  }
+
+  /* Gradient text */
+  .gradient-text {
+    @apply bg-gradient-to-r from-brand-600 to-purple-600 bg-clip-text text-transparent;
+  }
+
+  .gradient-text-dark {
+    @apply bg-gradient-to-r from-brand-400 to-purple-400 bg-clip-text text-transparent;
+  }
+
+  /* Status indicators */
+  .status-dot {
+    @apply w-2 h-2 rounded-full;
+  }
+
+  .status-success {
+    @apply bg-green-500 animate-pulse-subtle;
+  }
+
+  .status-warning {
+    @apply bg-yellow-500 animate-pulse-subtle;
+  }
+
+  .status-error {
+    @apply bg-red-500 animate-pulse-subtle;
+  }
+
+  .status-info {
+    @apply bg-brand-500 animate-pulse-subtle;
+  }
+
+  /* File upload zone */
+  .upload-zone {
+    @apply border-2 border-dashed border-gray-300 rounded-xl;
+    @apply hover:border-gray-400 transition-colors duration-200;
+    @apply dark:border-gray-600 dark:hover:border-gray-500;
+  }
+
+  .upload-zone.drag-active {
+    @apply border-brand-400 bg-brand-50;
+    @apply dark:border-brand-500 dark:bg-brand-900/20;
+  }
+
+  /* Hash display */
+  .hash-display {
+    @apply font-mono text-sm bg-gray-100 px-3 py-2 rounded-md;
+    @apply break-all select-all;
+    @apply dark:bg-gray-700 dark:text-gray-300;
+  }
+
+  /* Progress bar */
+  .progress-bar {
+    @apply w-full bg-gray-200 rounded-full h-2 overflow-hidden;
+    @apply dark:bg-gray-700;
+  }
+
+  .progress-fill {
+    @apply h-full bg-gradient-to-r from-brand-500 to-brand-600 rounded-full;
+    @apply transition-all duration-300 ease-out;
+  }
+
+  /* Badge styles */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .badge-success {
+    @apply bg-green-100 text-green-800 dark:bg-green-800/20 dark:text-green-300;
+  }
+
+  .badge-warning {
+    @apply bg-yellow-100 text-yellow-800 dark:bg-yellow-800/20 dark:text-yellow-300;
+  }
+
+  .badge-error {
+    @apply bg-red-100 text-red-800 dark:bg-red-800/20 dark:text-red-300;
+  }
+
+  .badge-info {
+    @apply bg-brand-100 text-brand-800 dark:bg-brand-800/20 dark:text-brand-300;
+  }
+}
+
+/* Utility styles */
+@layer utilities {
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Safe area for mobile */
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .safe-left {
+    padding-left: env(safe-area-inset-left);
+  }
+
+  .safe-right {
+    padding-right: env(safe-area-inset-right);
+  }
+
+  /* Animation delays */
+  .delay-75 {
+    animation-delay: 75ms;
+  }
+
+  .delay-150 {
+    animation-delay: 150ms;
+  }
+
+  .delay-300 {
+    animation-delay: 300ms;
+  }
+
+  .delay-500 {
+    animation-delay: 500ms;
+  }
+
+  /* Text gradients for dark mode support */
+  .text-gradient {
+    @apply gradient-text dark:gradient-text-dark;
+  }
+
+  /* Hover effects */
+  .hover-lift {
+    @apply transition-transform duration-200 hover:scale-105;
+  }
+
+  .hover-glow {
+    @apply transition-shadow duration-300;
+  }
+
+  .hover-glow:hover {
+    @apply shadow-glow;
+  }
+
+  /* Focus visible for better accessibility */
+  .focus-visible-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2;
+    @apply dark:focus-visible:ring-brand-400 dark:focus-visible:ring-offset-gray-800;
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .print-break-before {
+    page-break-before: always;
+  }
+
+  .print-break-after {
+    page-break-after: always;
+  }
+
+  .print-break-inside-avoid {
+    page-break-inside: avoid;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .card {
+    @apply border-2 border-gray-900 dark:border-gray-100;
+  }
+
+  .btn-primary {
+    @apply border-2 border-transparent;
+  }
+
+  .input-primary {
+    @apply border-2 border-gray-900 dark:border-gray-100;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .animate-spin,
+  .animate-ping,
+  .animate-pulse,
+  .animate-bounce {
+    animation: none !important;
+  }
+}
