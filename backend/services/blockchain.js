@@ -1,10 +1,32 @@
 const { ethers } = require('ethers');
-const contractAddresses = require('../../deployed-addresses.json');
 
-// Contract ABIs
-const ContentRegistryABI = require('../../artifacts/contracts/ContentOwnershipRegistry.sol/ContentOwnershipRegistry.json').abi;
-const EscrowABI = require('../../artifacts/contracts/FreelanceEscrow.sol/FreelanceEscrow.json').abi;
-const SubscriptionPoolABI = require('../../artifacts/contracts/SubscriptionPool.sol/SubscriptionPool.json').abi;
+// Load deployed addresses if available (produced by scripts/deploy.js)
+let contractAddresses = {};
+try {
+    contractAddresses = require('../../deployed-addresses.json');
+} catch (err) {
+    console.warn('⚠️ deployed-addresses.json not found — running in degraded blockchain mode. Please run the deploy script to generate this file.');
+}
+
+// Try to load ABIs from artifacts; if missing, start in degraded mode and warn
+let ContentRegistryABI = null;
+let EscrowABI = null;
+let SubscriptionPoolABI = null;
+try {
+    ContentRegistryABI = require('../../artifacts/contracts/ContentOwnershipRegistry.sol/ContentOwnershipRegistry.json').abi;
+} catch (err) {
+    console.warn('⚠️ ContentOwnershipRegistry ABI not found in artifacts/ — run `npx hardhat compile` to generate artifacts');
+}
+try {
+    EscrowABI = require('../../artifacts/contracts/FreelanceEscrow.sol/FreelanceEscrow.json').abi;
+} catch (err) {
+    console.warn('⚠️ FreelanceEscrow ABI not found in artifacts/ — run `npx hardhat compile` to generate artifacts');
+}
+try {
+    SubscriptionPoolABI = require('../../artifacts/contracts/SubscriptionPool.sol/SubscriptionPool.json').abi;
+} catch (err) {
+    console.warn('⚠️ SubscriptionPool ABI not found in artifacts/ — run `npx hardhat compile` to generate artifacts');
+}
 
 class BlockchainService {
     constructor() {
@@ -14,31 +36,58 @@ class BlockchainService {
                 : process.env.POLYGON_MUMBAI_RPC
         );
         
-        this.wallet = new ethers.Wallet(process.env.PRIVATE_KEY, this.provider);
+        if (process.env.PRIVATE_KEY) {
+            try {
+                this.wallet = new ethers.Wallet(process.env.PRIVATE_KEY, this.provider);
+            } catch (err) {
+                console.warn('⚠️ Could not initialize wallet from PRIVATE_KEY:', err.message);
+                this.wallet = null;
+            }
+        } else {
+            console.warn('⚠️ PRIVATE_KEY not set — blockchain write operations will be disabled');
+            this.wallet = null;
+        }
+
         this.initContracts();
     }
 
     initContracts() {
         try {
-            this.contentRegistry = new ethers.Contract(
-                contractAddresses.contentOwnershipRegistry,
-                ContentRegistryABI,
-                this.wallet
-            );
+            // Initialize contracts only when both ABI and address are present
+            if (contractAddresses.contentOwnershipRegistry && ContentRegistryABI) {
+                this.contentRegistry = new ethers.Contract(
+                    contractAddresses.contentOwnershipRegistry,
+                    ContentRegistryABI,
+                    this.wallet || this.provider
+                );
+            } else {
+                this.contentRegistry = null;
+                console.warn('⚠️ Content registry not initialized (missing ABI or address)');
+            }
 
-            this.escrow = new ethers.Contract(
-                contractAddresses.freelanceEscrow,
-                EscrowABI,
-                this.wallet
-            );
+            if (contractAddresses.freelanceEscrow && EscrowABI) {
+                this.escrow = new ethers.Contract(
+                    contractAddresses.freelanceEscrow,
+                    EscrowABI,
+                    this.wallet || this.provider
+                );
+            } else {
+                this.escrow = null;
+                console.warn('⚠️ Escrow contract not initialized (missing ABI or address)');
+            }
 
-            this.subscriptionPool = new ethers.Contract(
-                contractAddresses.subscriptionPool,
-                SubscriptionPoolABI,
-                this.wallet
-            );
+            if (contractAddresses.subscriptionPool && SubscriptionPoolABI) {
+                this.subscriptionPool = new ethers.Contract(
+                    contractAddresses.subscriptionPool,
+                    SubscriptionPoolABI,
+                    this.wallet || this.provider
+                );
+            } else {
+                this.subscriptionPool = null;
+                console.warn('⚠️ SubscriptionPool contract not initialized (missing ABI or address)');
+            }
 
-            console.log('✅ Blockchain service initialized with contracts');
+            console.log('ℹ️ Blockchain service initialized (some contracts may be unavailable)');
         } catch (error) {
             console.error('❌ Error initializing contracts:', error);
             throw new Error('Failed to initialize blockchain service');
@@ -48,6 +97,7 @@ class BlockchainService {
     // Content Ownership Registry Methods
     async registerContent(contentHash, ipfsHash, title, description, isTransferable = true) {
         try {
+            if (!this.contentRegistry) throw new Error('Content registry contract not initialized');
             const tx = await this.contentRegistry.registerContent(
                 contentHash,
                 ipfsHash,
@@ -74,6 +124,7 @@ class BlockchainService {
 
     async verifyContent(contentHash) {
         try {
+            if (!this.contentRegistry) throw new Error('Content registry contract not initialized');
             const result = await this.contentRegistry.verifyContent(contentHash);
             return {
                 owner: result.owner,
@@ -93,6 +144,7 @@ class BlockchainService {
 
     async transferContentOwnership(contentHash, newOwner, userWallet) {
         try {
+            if (!this.contentRegistry) throw new Error('Content registry contract not initialized');
             const contractWithUser = this.contentRegistry.connect(userWallet);
             const tx = await contractWithUser.transferOwnership(contentHash, newOwner);
             const receipt = await tx.wait();
@@ -114,6 +166,7 @@ class BlockchainService {
 
     async getOwnerContent(owner) {
         try {
+            if (!this.contentRegistry) throw new Error('Content registry contract not initialized');
             const contentHashes = await this.contentRegistry.getOwnerContent(owner);
             return contentHashes;
         } catch (error) {
@@ -124,6 +177,7 @@ class BlockchainService {
     // Escrow Methods
     async createEscrow(freelancer, mediator, amount, token, deadline, workDescription) {
         try {
+            if (!this.escrow) throw new Error('Escrow contract not initialized');
             const tx = await this.escrow.createEscrow(
                 freelancer,
                 mediator,
@@ -152,6 +206,7 @@ class BlockchainService {
 
     async fundEscrow(escrowId, amount, token, userWallet) {
         try {
+            if (!this.escrow) throw new Error('Escrow contract not initialized');
             const contractWithUser = this.escrow.connect(userWallet);
             const value = token === ethers.constants.AddressZero ? ethers.utils.parseEther(amount.toString()) : 0;
             
@@ -173,6 +228,7 @@ class BlockchainService {
 
     async submitWork(escrowId, deliveryHash, userWallet) {
         try {
+            if (!this.escrow) throw new Error('Escrow contract not initialized');
             const contractWithUser = this.escrow.connect(userWallet);
             const tx = await contractWithUser.submitWork(escrowId, deliveryHash);
             const receipt = await tx.wait();
@@ -192,6 +248,7 @@ class BlockchainService {
 
     async approveWork(escrowId, userWallet) {
         try {
+            if (!this.escrow) throw new Error('Escrow contract not initialized');
             const contractWithUser = this.escrow.connect(userWallet);
             const tx = await contractWithUser.approveWork(escrowId);
             const receipt = await tx.wait();
@@ -208,6 +265,7 @@ class BlockchainService {
 
     async raiseDispute(escrowId, userWallet) {
         try {
+            if (!this.escrow) throw new Error('Escrow contract not initialized');
             const contractWithUser = this.escrow.connect(userWallet);
             const tx = await contractWithUser.raiseDispute(escrowId);
             const receipt = await tx.wait();
@@ -227,6 +285,7 @@ class BlockchainService {
 
     async getEscrowDetails(escrowId) {
         try {
+            if (!this.escrow) throw new Error('Escrow contract not initialized');
             const details = await this.escrow.getEscrowDetails(escrowId);
             return {
                 id: details.id.toNumber(),

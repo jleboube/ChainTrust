@@ -13,7 +13,6 @@ WORKDIR /app
 
 # Copy package files
 COPY package*.json ./
-COPY backend/package*.json ./backend/
 
 # Install dependencies
 RUN npm ci --only=production --omit=dev
@@ -21,9 +20,8 @@ RUN npm ci --only=production --omit=dev
 # Copy source code
 COPY backend/ ./backend/
 COPY contracts/ ./contracts/
-COPY deployed-addresses.json ./
 COPY hardhat.config.js ./
-COPY .env ./
+# Note: do NOT copy .env or deployed-addresses.json at build time. Mount them at runtime or ensure they exist in build context when needed.
 
 # Create uploads directory
 RUN mkdir -p uploads
@@ -47,5 +45,5 @@ EXPOSE 3001
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:3001/health || exit 1
 
-# Start the application
-CMD ["node", "backend/server.js"]
+# Start the application (run migrations first)
+CMD ["/bin/sh", "-c", "node backend/migrations/run_migrations.js || true; node backend/server.js"]
