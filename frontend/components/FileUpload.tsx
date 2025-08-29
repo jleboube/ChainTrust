@@ -12,8 +12,8 @@ import {
 } from '@heroicons/react/24/outline';
 import { useAccount } from 'wagmi';
 import { toast } from 'react-hot-toast';
-import { registerContent, generateFileHash } from '../../lib/api';
-import OwnershipCertificate from './OwnershipCertificate';
+import { registerContent, generateFileHash } from '../lib/api';
+import OwnershipCertificate from './ownership/OwnershipCertificate';
 
 interface FileUploadProps {
   onSuccess?: (result: any) => void;

@@ -1,6 +1,6 @@
 import React from 'react';
 import Head from 'next/head';
-import EscrowPage from '../../components/escrow/EscrowPage';
+import EscrowPage from '../../components/escrow/EscrowDashboard';
 
 export default function EscrowIndex() {
   return (

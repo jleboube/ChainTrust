@@ -14,7 +14,7 @@ import {
   ArrowTopRightOnSquareIcon
 } from '@heroicons/react/24/outline';
 import { toast } from 'react-hot-toast';
-import { verifyContent } from '../../lib/api';
+import { verifyContent } from '../lib/api';
 
 interface VerificationPageProps {
   contentHash?: string;

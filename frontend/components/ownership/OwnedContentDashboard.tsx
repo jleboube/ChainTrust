@@ -18,7 +18,7 @@ import {
 import { useAccount } from 'wagmi';
 import { toast } from 'react-hot-toast';
 import { getOwnerContent, shortenAddress, OwnerContentResponse } from '../../lib/api';
-import LoadingSpinner from '../common/LoadingSpinner';
+import LoadingSpinner from '../LoadingSpinner';
 
 interface ContentItem {
   contentHash: string;

@@ -8,9 +8,9 @@ import {
   ShieldCheckIcon
 } from '@heroicons/react/24/outline';
 import { useAccount } from 'wagmi';
-import FileUpload from './FileUpload';
+import FileUpload from '../components/FileUpload';
 import VerificationPage from './VerificationPage';
-import OwnedContentDashboard from './OwnedContentDashboard';
+import OwnedContentDashboard from '../components/ownership/OwnedContentDashboard';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 const OwnershipPage: React.FC = () => {

@@ -21,10 +21,10 @@ import {
 import { useAccount } from 'wagmi';
 import { toast } from 'react-hot-toast';
 import { getEscrowDetails, shortenAddress } from '../../lib/api';
-import LoadingSpinner from '../common/LoadingSpinner';
-import WorkSubmissionModal from './WorkSubmissionModal';
-import FundEscrowModal from './FundEscrowModal';
-import DisputeModal from './DisputeModal';
+import LoadingSpinner from '../../components/LoadingSpinner';
+import WorkSubmissionModal from '../../components/escrow/Work_SubmissionModal';
+import FundEscrowModal from '../../components/escrow/FundEscrowModal';
+import DisputeModal from '../../components/escrow/DisputeModal';
 
 interface EscrowDetailPageProps {
   escrowId: string;

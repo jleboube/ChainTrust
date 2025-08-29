@@ -1,7 +1,7 @@
 import React from 'react';
 import Head from 'next/head';
 import { GetServerSideProps } from 'next';
-import EscrowDetailPage from '../../components/escrow/EscrowDetailPage';
+import EscrowDetailPage from './EscrowDetail';
 
 interface EscrowDetailProps {
   escrowId: string;

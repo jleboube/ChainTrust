@@ -17,7 +17,7 @@ import {
 import { useAccount } from 'wagmi';
 import { toast } from 'react-hot-toast';
 import { getUserEscrows } from '../../lib/api';
-import LoadingSpinner from '../common/LoadingSpinner';
+import LoadingSpinner from '../LoadingSpinner';
 import CreateEscrowForm from './CreateEscrowForm';
 import EscrowCard from './EscrowCard';
 

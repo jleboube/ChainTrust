@@ -10,7 +10,7 @@ import {
   UserGroupIcon,
   ArrowTrendingUpIcon
 } from '@heroicons/react/24/outline';
-import LoadingSpinner from '../common/LoadingSpinner';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 interface StatCard {
   title: string;

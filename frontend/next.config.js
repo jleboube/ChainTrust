@@ -109,8 +109,6 @@ const nextConfig = {
 
   // Experimental features
   experimental: {
-    // App directory (Next.js 13+)
-    appDir: false,
     // Server components
     serverComponentsExternalPackages: [],
     // Turbo features

@@ -20,7 +20,7 @@ import {
 import { useRouter } from 'next/router';
 import { toast } from 'react-hot-toast';
 import { shortenAddress } from '../../lib/api';
-import WorkSubmissionModal from './WorkSubmissionModal';
+import WorkSubmissionModal from './Work_SubmissionModal';
 import FundEscrowModal from './FundEscrowModal';
 import DisputeModal from './DisputeModal';
 

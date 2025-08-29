@@ -11,16 +11,15 @@ RUN apk add --no-cache \
 # Set working directory
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+# Copy backend package files
+COPY backend/package.json ./
 
-# Install dependencies
-RUN npm ci --only=production --omit=dev
+# Generate package-lock.json and install dependencies
+RUN npm install --production
 
 # Copy source code
 COPY backend/ ./backend/
 COPY contracts/ ./contracts/
-COPY hardhat.config.js ./
 # Note: do NOT copy .env or deployed-addresses.json at build time. Mount them at runtime or ensure they exist in build context when needed.
 
 # Create uploads directory
